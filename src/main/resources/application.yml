@@ -1,0 +1,29 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: Storage
+
+  datasource:
+    url: jdbc:postgresql://192.168.1.98:5454/storage?currentSchema=files
+    username: ${DB_USER:admin_dev}
+    password: ${DB_PASSWORD:uGwX87DidU}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.mgnetworking: DEBUG
+    org.springframework.security: DEBUG
