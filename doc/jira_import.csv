@@ -1,0 +1,11 @@
+Résumé,Type de ticket,Description,Priorité,Étiquettes
+Gestion des CORS via Gateway,Story,Le CORS doit être géré uniquement par le Gateway. File Storage API exposera uniquement ses endpoints en interne.,High,"gateway,cors"
+Authentification JWT via Keycloak,Story,"Configurer File Storage API comme Resource Server, valider les JWT émis par Keycloak. Gérer ROLE_USER et ROLE_ADMIN.",High,"security,keycloak,jwt"
+Upload de fichiers,Story,"L'utilisateur peut uploader un fichier (jpg, png, pdf...). Stockage sur NAS avec UUID + timestamp + extension originale.",High,"upload,storage"
+Téléchargement des fichiers,Story,Permettre la récupération d'un fichier via URL publique. Les fichiers privés seront gérés dans une future version.,Medium,"download,public"
+Validation des formats autorisés,Tâche,"Bloquer les fichiers dangereux (.exe, scripts). Taille max = 10Mo.",High,"validation,security"
+Gestion des doublons par hash,Tâche,Empêcher qu'un utilisateur ait deux fichiers identiques (même SHA-256). Index sur file_hash pour vérification rapide.,High,"deduplication,db"
+Implémenter endpoint POST /api/v1/files/upload,Tâche,Développer l’API pour uploader un fichier (multipart/form-data). Retourne métadonnées et URL d’accès.,High,"api,upload"
+Implémenter endpoint GET /api/v1/files/{id},Tâche,Développer l’API pour récupérer les métadonnées d’un fichier par son ID.,Medium,"api,download"
+Implémenter endpoint GET /api/v1/files,Tâche,Lister les fichiers de l’utilisateur connecté avec pagination.,Medium,"api,list"
+Implémenter endpoint DELETE /api/v1/files/{id},Tâche,Permettre la suppression d’un fichier (ROLE_USER propriétaire ou ROLE_ADMIN).,High,"api,delete"
