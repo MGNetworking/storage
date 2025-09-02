@@ -29,6 +29,10 @@
     - [Dépendances Spring Initializr](#dépendances-spring-initializr-à-sélectionner)
     - [Dépendances manuelles requises](#dépendances-manuelles-à-ajouter-au-pomxml)
     - [Instructions de setup](#instructions-de-setup)
+7. [Git Workflow & CI/CD](#7-git-workflow--cicd)
+   - [Structure des branches](#structure-des-branches)
+   - [Pipeline Jenkins](#pipeline-jenkins)
+   - [Stratégie de déploiement](#stratégie-de-déploiement)
 
 ---
 
@@ -283,3 +287,23 @@ file-storage:
 1. Générer le projet via Spring Initializr avec les dépendances listées ci-dessus
 2. Ajouter manuellement les dépendances Keycloak et OpenAPI dans le `pom.xml`
 3. Le fichier `application-nas.yml` sera automatiquement injecté par Jenkins lors du déploiement
+
+
+## 7. Git Workflow & CI/CD
+
+### Structure des branches
+- **master** : Production stable (protégée, pas de push direct)
+- **dev** : Branche d'intégration (protégée, merge via PR uniquement)
+- **feature/FSA-X** : Branches de développement (nommées selon ticket Jira)
+- **nas** : Déploiement production avec rollback automatique
+
+### Pipeline Jenkins
+- **Feature → Dev** : Tests automatiques + validation code quality
+- **Dev → Nas** : Tests d'intégration + déploiement + rollback si échec
+- **Protection** : Aucun merge sans tests passants
+
+### Stratégie de déploiement
+- Déploiement automatique sur environnement dev
+- Tests d'intégration et régression sur branche nas
+- Mécanisme de rollback automatique en cas d'échec
+- Notifications Slack/email des déploiements
