@@ -1,3 +1,6 @@
+# Jenkins configu
+.env-prod
+
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
