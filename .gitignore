@@ -1,5 +1,6 @@
 # Jenkins configu
 .env-prod
+/sql
 
 HELP.md
 target/
