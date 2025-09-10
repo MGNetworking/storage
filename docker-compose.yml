@@ -1,0 +1,47 @@
+services:
+  file-storage-api:
+    container_name: api-storage
+    image: ${DOCKER_REGISTRY}/${APP_NAME}:${IMAGE_TAG}
+    ports:
+      - "${APP_PORT}:8666"
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=${DB_NAME}
+      - DB_SCHEMA=files
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - KEYCLOAK_URL=${KEYCLOAK_URL}
+      - UPLOADS_PATH=${UPLOADS_PATH}
+    volumes:
+      - uploads:/app/uploads
+      - logs:/app/logs
+    depends_on:
+      - postgres
+      - redis
+
+  postgres:
+    container_name: postgres-storage
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    container_name: redis-storage
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+
+volumes:
+  postgres_data:
+  redis_data:
+  uploads:
+  logs:
+
+networks:
+  default:
+    driver: bridge

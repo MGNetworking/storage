@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  file-storage-api:
+    image: ${DOCKER_REGISTRY}/${APP_NAME}:${IMAGE_TAG}
+    ports:
+      - "${APP_PORT}:8666"
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=${DB_NAME}
+      - DB_SCHEMA=files
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - KEYCLOAK_URL=${KEYCLOAK_URL}
+      - UPLOADS_PATH=${UPLOADS_PATH}
+    volumes:
+      - uploads:/app/uploads
+      - logs:/app/logs
+    depends_on:
+      - postgres
+      - redis
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    deploy:
+      replicas: 1
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+    deploy:
+      replicas: 1
+
+volumes:
+  postgres_data:
+  redis_data:
+  uploads:
+  logs:
+
+networks:
+  default:
+    driver: overlay
