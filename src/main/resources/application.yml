@@ -1,29 +1,36 @@
 server:
-  port: 8081
+  port: 8666
 
 spring:
   application:
-    name: Storage
+    name: ${APP_NAME}
 
   datasource:
-    url: jdbc:postgresql://192.168.1.98:5454/storage?currentSchema=files
-    username: ${DB_USER:admin_dev}
-    password: ${DB_PASSWORD:uGwX87DidU}
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}?currentSchema=${DB_SCHEMA}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
   jpa:
     hibernate:
-      ddl-auto: validate
-    show-sql: true
+      ddl-auto: ${DDL_AUTO:validate}
+    show-sql: ${SHOW_SQL:true}
 
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics
+        include: ${MANAGEMENT_ENDPOINTS:health,info,metrics}
   endpoint:
     health:
-      show-details: always
+      show-details: ${HEALTH_DETAILS:always}
 
 logging:
   level:
-    com.mgnetworking: DEBUG
-    org.springframework.security: DEBUG
+    com.mgnetworking: ${LOG_LEVEL_APP:DEBUG}
+    org.springframework.security: ${LOG_LEVEL_SECURITY:DEBUG}
+
+# Configurations spécifiques à l'API
+app:
+  keycloak:
+    url: ${KEYCLOAK_URL:http://localhost:8080}
+  storage:
+    uploads-path: ${UPLOADS_PATH:/tmp/uploads}
