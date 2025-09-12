@@ -5,13 +5,7 @@ pipeline {
 
         // TODO sur le server Jenkins ajouter le fichier .env-prod
         // TODO pour que les variable ce fichier puisse être exploiter
-        Nexus_CREDS = credentials('nexus-credentials')
-        Nas_CREDS = credentials('NAS')
-
-        ENV_PROD_FILE = credentials('env-prod-file')
         NAS_SERVER = 'nas.backhole.ovh'
-        //TEST_TOKEN = credentials('test-jwt-token')
-
         MAVEN_OPTS = '-Xmx1024m -XX:+UseG1GC'
 
         // Tags intelligents pour traçabilité
@@ -85,6 +79,14 @@ pipeline {
                         echo "Image pushée: ${env.DOCKER_REGISTRY}/${env.APP_NAME}:${IMAGE_TAG}"
                         echo "Image pushée: ${env.DOCKER_REGISTRY}/${env.APP_NAME}:latest"
                     }
+                }
+            }
+
+            post {
+                always {
+                    // Cette étape envoie le résultat du build Jenkins vers GitHub pour mettre à jour le statut du commit
+                    echo ('Jenkins envoie le statut à GitHub')
+                    step([$class: 'GitHubCommitStatusSetter'])
                 }
             }
         }
@@ -240,13 +242,8 @@ pipeline {
     post {
         always {
             script {
-                node {
-                    // Jenkins envoie le statut à GitHub
-                    step([$class: 'GitHubCommitStatusSetter'])
-
-                    // Nettoyage workspace
-                    cleanWs()
-                }
+                // Nettoyage workspace
+                cleanWs()
             }
         }
 
