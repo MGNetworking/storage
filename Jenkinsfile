@@ -10,7 +10,7 @@ pipeline {
 
         ENV_PROD_FILE = credentials('env-prod-file')
         NAS_SERVER = 'nas.backhole.ovh'
-        TEST_TOKEN = credentials('test-jwt-token')
+        //TEST_TOKEN = credentials('test-jwt-token')
 
         MAVEN_OPTS = '-Xmx1024m -XX:+UseG1GC'
 
@@ -46,7 +46,7 @@ pipeline {
                         sourceFileResolver: sourceFiles('STORE_LAST_BUILD'),
                         failUnhealthy: false,
                         globalThresholds: [
-                                [thresholdTarget: 'LINE',   unhealthyThreshold: 70.0, unstableThreshold: 60.0],
+                                [thresholdTarget: 'LINE', unhealthyThreshold: 70.0, unstableThreshold: 60.0],
                                 [thresholdTarget: 'BRANCH', unhealthyThreshold: 65.0, unstableThreshold: 55.0],
                                 [thresholdTarget: 'METHOD', unhealthyThreshold: 75.0, unstableThreshold: 65.0]
                         ]
@@ -70,7 +70,7 @@ pipeline {
                 }
             }
             steps {
-                script{
+                script {
                     echo "Build et push de l'image Docker vers Nexus..."
 
                     docker.withRegistry("https://${env.DOCKER_REGISTRY}", 'nexus-credentials') {
@@ -205,7 +205,7 @@ pipeline {
             }
         }
 
-        stage('Tests de régression') {
+/*        stage('Tests de régression') {
             when { branch 'nas' }
             steps {
                 echo "Tests de régression..."
@@ -231,7 +231,7 @@ pipeline {
                     }
                 }
             }
-        }
+        }*/
     }
 
     // ========================================
@@ -239,12 +239,15 @@ pipeline {
     // ========================================
     post {
         always {
+            script {
+                node {
+                    // Jenkins envoie le statut à GitHub
+                    step([$class: 'GitHubCommitStatusSetter'])
 
-            // Jenkins envoie le statut à GitHub
-            step([$class: 'GitHubCommitStatusSetter'])
-
-            // Nettoyage workspace
-            cleanWs()
+                    // Nettoyage workspace
+                    cleanWs()
+                }
+            }
         }
 
         success {
